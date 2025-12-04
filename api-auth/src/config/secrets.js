@@ -1,4 +1,4 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-export const JWT_SECRET = process.env.JWT_SECRET || "senha-padrao";
+export const SEGREDO_JWT = process.env.JWT_SECRET || "senha-padrao";

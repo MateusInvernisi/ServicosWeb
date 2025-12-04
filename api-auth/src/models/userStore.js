@@ -1,8 +1,8 @@
-export const users = [
+export const usuarios = [
   {
     id: 1,
-    name: "Admin",
+    nome: "Admin",
     email: "admin@salao.com",
-    password: "123456" // sem hash, pois é didático
+    senha: "123456"
   }
 ];

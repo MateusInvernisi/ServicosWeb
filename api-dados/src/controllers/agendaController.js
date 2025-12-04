@@ -1,19 +1,19 @@
 import { agenda } from "../models/agendaStore.js";
 
-export const listarAgenda = (req, res) => {
-  res.json(agenda);
+export const listarAgenda = (requisicao, resposta) => {
+  resposta.json(agenda);
 };
 
-export const criarAgendamento = (req, res) => {
-  const { clienteId, servicoId, data } = req.body;
+export const criarAgendamento = (requisicao, resposta) => {
+  const { clienteId, servicoId, data } = requisicao.body;
 
-  const novo = {
+  const novoAgendamento = {
     id: agenda.length + 1,
     clienteId,
     servicoId,
-    data
+    data,
   };
 
-  agenda.push(novo);
-  res.status(201).json(novo);
+  agenda.push(novoAgendamento);
+  resposta.status(201).json(novoAgendamento);
 };

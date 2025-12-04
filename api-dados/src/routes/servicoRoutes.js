@@ -1,13 +1,10 @@
 import { Router } from "express";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
-import {
-  listarServicos,
-  criarServico
-} from "../controllers/servicoController.js";
+import { middlewareAutenticacao } from "../middlewares/authMiddleware.js";
+import {listarServicos, criarServico} from "../controllers/servicoController.js";
 
-const router = Router();
+const roteador = Router();
 
-router.get("/", authMiddleware, listarServicos);
-router.post("/", authMiddleware, criarServico);
+roteador.get("/", middlewareAutenticacao, listarServicos);
+roteador.post("/", middlewareAutenticacao, criarServico);
 
-export default router;
+export default roteador;

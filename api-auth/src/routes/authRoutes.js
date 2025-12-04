@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { login, register, me } from "../controllers/authController.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import {fazerLogin, registrarUsuario, obterUsuarioAtual} from "../controllers/authController.js";
+import { middlewareAutenticacao } from "../middlewares/authMiddleware.js";
 
-const router = Router();
+const roteador = Router();
 
-router.post("/register", register);
-router.post("/login", login);
-router.get("/me", authMiddleware, me);
+roteador.post("/register", registrarUsuario);
+roteador.post("/login", fazerLogin);
+roteador.get("/me", middlewareAutenticacao, obterUsuarioAtual);
 
-export default router;
+export default roteador;

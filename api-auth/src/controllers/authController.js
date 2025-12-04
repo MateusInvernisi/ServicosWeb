@@ -1,77 +1,87 @@
 import jwt from "jsonwebtoken";
-import { users } from "../models/userStore.js";
-import { sessions } from "../models/sessionStore.js";
-import { JWT_SECRET } from "../config/secrets.js";
+import { usuarios } from "../models/userStore.js";
+import { sessoes } from "../models/sessionStore.js";
+import { SEGREDO_JWT } from "../config/secrets.js";
 
 // Verifica se o token existente ainda é válido
-function tokenStillValid(token) {
+function tokenAindaValido(token) {
   try {
-    jwt.verify(token, JWT_SECRET);
+    jwt.verify(token, SEGREDO_JWT);
     return true;
-  } catch (err) {
+  } catch (erro) {
     return false;
   }
 }
 
-export const register = (req, res) => {
-  const { name, email, password } = req.body;
+export const registrarUsuario = (requisicao, resposta) => {
+  const { nome, email, senha } = requisicao.body;
 
-  const existing = users.find(u => u.email === email);
-  if (existing) {
-    return res.status(400).json({ error: "Usuário já existe." });
+  const usuarioExistente = usuarios.find(
+    (usuario) => usuario.email === email
+  );
+
+  if (usuarioExistente) {
+    return resposta
+      .status(400)
+      .json({ error: "Usuário já existe." });
   }
 
-  const newUser = {
-    id: users.length + 1,
-    name,
+  const novoUsuario = {
+    id: usuarios.length + 1,
+    nome,
     email,
-    password
+    senha,
   };
 
-  users.push(newUser);
+  usuarios.push(novoUsuario);
 
-  return res.status(201).json({ message: "Usuário registrado com sucesso." });
+  return resposta
+    .status(201)
+    .json({ message: "Usuário registrado com sucesso." });
 };
 
-export const login = (req, res) => {
-  const { email, password } = req.body;
+export const fazerLogin = (requisicao, resposta) => {
+  const { email, senha } = requisicao.body;
 
-  const user = users.find(u => u.email === email && u.password === password);
+  const usuario = usuarios.find(
+    (usuarioItem) =>
+      usuarioItem.email === email && usuarioItem.senha === senha
+  );
 
-  if (!user) {
-    return res.status(401).json({ error: "Credenciais inválidas." });
+  if (!usuario) {
+    return resposta.status(401).json({ error: "Credenciais inválidas." });
   }
 
   // Se já existe token ativo, tentamos reaproveitar
-  const existingToken = sessions[user.id];
+  const tokenExistente = sessoes[usuario.id];
 
-  if (existingToken && tokenStillValid(existingToken)) {
-    return res.json({
+  if (tokenExistente && tokenAindaValido(tokenExistente)) {
+    return resposta.json({
       message: "Login realizado com token reaproveitado.",
-      token: existingToken
+      token: tokenExistente,
     });
   }
 
   // Se não existe token ou expirou, gera novo
   const token = jwt.sign(
     {
-      id: user.id,
-      name: user.name,
-      email: user.email
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
     },
-    JWT_SECRET,
+    SEGREDO_JWT,
     { expiresIn: "1h" }
   );
 
-  // salva no mapa de sessões
-  sessions[user.id] = token;
+  // Salva no mapa de sessões
+  sessoes[usuario.id] = token;
 
-  return res.json({
+  return resposta.json({
     message: "Login realizado com novo token.",
-    token
+    token,
   });
 };
 
-export const me = (req, res) => {
-  return res.json({ user: req.user });
+export const obterUsuarioAtual = (requisicao, resposta) => {
+  return resposta.json({ usuario: requisicao.usuario });
 };

@@ -1,17 +1,12 @@
 import { Router } from "express";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
-import {
-  listarClientes,
-  criarCliente,
-  atualizarCliente,
-  removerCliente
-} from "../controllers/clienteController.js";
+import { middlewareAutenticacao } from "../middlewares/authMiddleware.js";
+import {listarClientes, criarCliente, atualizarCliente, removerCliente} from "../controllers/clienteController.js";
 
-const router = Router();
+const roteador = Router();
 
-router.get("/", authMiddleware, listarClientes);
-router.post("/", authMiddleware, criarCliente);
-router.put("/:id", authMiddleware, atualizarCliente);
-router.delete("/:id", authMiddleware, removerCliente);
+roteador.get("/", middlewareAutenticacao, listarClientes);
+roteador.post("/", middlewareAutenticacao, criarCliente);
+roteador.put("/:id", middlewareAutenticacao, atualizarCliente);
+roteador.delete("/:id", middlewareAutenticacao, removerCliente);
 
-export default router;
+export default roteador;

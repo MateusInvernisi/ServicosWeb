@@ -1,19 +1,20 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config/secrets.js";
+import { SEGREDO_JWT } from "../config/secrets.js";
 
-export const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+export const middlewareAutenticacao = (requisicao, resposta, proximo) => {
+  const cabecalhoAutorizacao = requisicao.headers.authorization;
 
-  if (!authHeader)
-    return res.status(401).json({ error: "Token não fornecido." });
+  if (!cabecalhoAutorizacao) {
+    return resposta.status(401).json({ error: "Token não fornecido." });
+  }
 
-  const token = authHeader.split(" ")[1];
+  const token = cabecalhoAutorizacao.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: "Token inválido." });
+    const dadosToken = jwt.verify(token, SEGREDO_JWT);
+    requisicao.user = dadosToken;
+    proximo();
+  } catch (erro) {
+    return resposta.status(401).json({ error: "Token inválido." });
   }
 };

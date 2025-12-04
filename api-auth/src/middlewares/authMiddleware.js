@@ -1,28 +1,31 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config/secrets.js";
-import { sessions } from "../models/sessionStore.js";
+import { SEGREDO_JWT } from "../config/secrets.js";
+import { sessoes } from "../models/sessionStore.js";
 
-export const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+export const middlewareAutenticacao = (requisicao, resposta, proximo) => {
+  const cabecalhoAutorizacao = requisicao.headers.authorization;
 
-  if (!authHeader)
-    return res.status(401).json({ error: "Token não fornecido." });
+  if (!cabecalhoAutorizacao) {
+    return resposta.status(401).json({ error: "Token não fornecido." });
+  }
 
-  const token = authHeader.split(" ")[1];
+  const token = cabecalhoAutorizacao.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const dadosToken = jwt.verify(token, SEGREDO_JWT);
 
-    // Valida se o token ainda está em sessão ativa
-    const sessionToken = sessions[decoded.id];
+    // Verifica se o token ainda está em sessão ativa
+    const tokenSessao = sessoes[dadosToken.id];
 
-    if (!sessionToken || sessionToken !== token) {
-      return res.status(401).json({ error: "Token inválido ou expirado." });
+    if (!tokenSessao || tokenSessao !== token) {
+      return resposta
+        .status(401)
+        .json({ error: "Token inválido ou expirado." });
     }
 
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: "Token inválido." });
+    requisicao.usuario = dadosToken;
+    proximo();
+  } catch (erro) {
+    return resposta.status(401).json({ error: "Token inválido." });
   }
 };

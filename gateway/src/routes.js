@@ -1,32 +1,29 @@
 import { Router } from "express";
 import proxy from "express-http-proxy";
-import { gatewayAuth } from "./middlewares/authMiddleware.js";
+import { autenticacaoGateway } from "./middlewares/authMiddleware.js";
 
-const router = Router();
+const roteador = Router();
 
-// Serviços (do .env)
-const AUTH_SERVICE = process.env.AUTH_SERVICE;
-const DADOS_SERVICE = process.env.DADOS_SERVICE;
+const SERVICO_AUTENTICACAO = process.env.AUTH_SERVICE;
+const SERVICO_DADOS = process.env.DADOS_SERVICE;
 
-// --- ROTA PARA AUTENTICAÇÃO ---
 // Estas rotas NÃO precisam de middleware de auth
-
-router.post("/auth/login", proxy(AUTH_SERVICE));
-router.post("/auth/register", proxy(AUTH_SERVICE));
-router.get("/auth/me", gatewayAuth, proxy(AUTH_SERVICE));
+roteador.post("/auth/login", proxy(SERVICO_AUTENTICACAO));
+roteador.post("/auth/register", proxy(SERVICO_AUTENTICACAO));
+roteador.get("/auth/me", autenticacaoGateway, proxy(SERVICO_AUTENTICACAO));
 
 // --- ROTA PARA CLIENTES ---
-router.get("/clientes", gatewayAuth, proxy(DADOS_SERVICE));
-router.post("/clientes", gatewayAuth, proxy(DADOS_SERVICE));
-router.put("/clientes/:id", gatewayAuth, proxy(DADOS_SERVICE));
-router.delete("/clientes/:id", gatewayAuth, proxy(DADOS_SERVICE));
+roteador.get("/clientes", autenticacaoGateway, proxy(SERVICO_DADOS));
+roteador.post("/clientes", autenticacaoGateway, proxy(SERVICO_DADOS));
+roteador.put("/clientes/:id", autenticacaoGateway, proxy(SERVICO_DADOS));
+roteador.delete("/clientes/:id", autenticacaoGateway, proxy(SERVICO_DADOS));
 
 // --- ROTA PARA SERVICOS ---
-router.get("/servicos", gatewayAuth, proxy(DADOS_SERVICE));
-router.post("/servicos", gatewayAuth, proxy(DADOS_SERVICE));
+roteador.get("/servicos", autenticacaoGateway, proxy(SERVICO_DADOS));
+roteador.post("/servicos", autenticacaoGateway, proxy(SERVICO_DADOS));
 
 // --- ROTA PARA AGENDA ---
-router.get("/agenda", gatewayAuth, proxy(DADOS_SERVICE));
-router.post("/agenda", gatewayAuth, proxy(DADOS_SERVICE));
+roteador.get("/agenda", autenticacaoGateway, proxy(SERVICO_DADOS));
+roteador.post("/agenda", autenticacaoGateway, proxy(SERVICO_DADOS));
 
-export default router;
+export default roteador;

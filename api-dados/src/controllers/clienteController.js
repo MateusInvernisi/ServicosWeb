@@ -1,47 +1,49 @@
 import { clientes } from "../models/clienteStore.js";
 
-export const listarClientes = (req, res) => {
-  res.json(clientes);
+export const listarClientes = (requisicao, resposta) => {
+  resposta.json(clientes);
 };
 
-export const criarCliente = (req, res) => {
-  const { nome, telefone } = req.body;
+export const criarCliente = (requisicao, resposta) => {
+  const { nome, telefone } = requisicao.body;
 
-  const novo = {
+  const novoCliente = {
     id: clientes.length + 1,
     nome,
-    telefone
+    telefone,
   };
 
-  clientes.push(novo);
-  res.status(201).json(novo);
+  clientes.push(novoCliente);
+  resposta.status(201).json(novoCliente);
 };
 
-export const atualizarCliente = (req, res) => {
-  const { id } = req.params;
-  const { nome, telefone } = req.body;
+export const atualizarCliente = (requisicao, resposta) => {
+  const { id } = requisicao.params;
+  const { nome, telefone } = requisicao.body;
 
-  const cliente = clientes.find(c => c.id == id);
+  const clienteEncontrado = clientes.find(
+    (clienteItem) => clienteItem.id == id
+  );
 
-  if (!cliente) {
-    return res.status(404).json({ error: "Cliente não encontrado." });
+  if (!clienteEncontrado) {
+    return resposta.status(404).json({ error: "Cliente não encontrado." });
   }
 
-  cliente.nome = nome ?? cliente.nome;
-  cliente.telefone = telefone ?? cliente.telefone;
+  clienteEncontrado.nome = nome ?? clienteEncontrado.nome;
+  clienteEncontrado.telefone = telefone ?? clienteEncontrado.telefone;
 
-  res.json(cliente);
+  resposta.json(clienteEncontrado);
 };
 
-export const removerCliente = (req, res) => {
-  const { id } = req.params;
+export const removerCliente = (requisicao, resposta) => {
+  const { id } = requisicao.params;
 
-  const index = clientes.findIndex(c => c.id == id);
+  const indice = clientes.findIndex((clienteItem) => clienteItem.id == id);
 
-  if (index === -1) {
-    return res.status(404).json({ error: "Cliente não encontrado." });
+  if (indice === -1) {
+    return resposta.status(404).json({ error: "Cliente não encontrado." });
   }
 
-  clientes.splice(index, 1);
-  res.json({ message: "Cliente removido." });
+  clientes.splice(indice, 1);
+  resposta.json({ message: "Cliente removido." });
 };

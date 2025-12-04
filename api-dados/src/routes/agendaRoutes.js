@@ -1,13 +1,10 @@
 import { Router } from "express";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
-import {
-  listarAgenda,
-  criarAgendamento
-} from "../controllers/agendaController.js";
+import { middlewareAutenticacao } from "../middlewares/authMiddleware.js";
+import { listarAgenda, criarAgendamento} from "../controllers/agendaController.js";
 
-const router = Router();
+const roteador = Router();
 
-router.get("/", authMiddleware, listarAgenda);
-router.post("/", authMiddleware, criarAgendamento);
+roteador.get("/", middlewareAutenticacao, listarAgenda);
+roteador.post("/", middlewareAutenticacao, criarAgendamento);
 
-export default router;
+export default roteador;

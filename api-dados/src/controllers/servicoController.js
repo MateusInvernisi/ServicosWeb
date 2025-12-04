@@ -1,18 +1,18 @@
 import { servicos } from "../models/servicoStore.js";
 
-export const listarServicos = (req, res) => {
-  res.json(servicos);
+export const listarServicos = (requisicao, resposta) => {
+  resposta.json(servicos);
 };
 
-export const criarServico = (req, res) => {
-  const { nome, preco } = req.body;
+export const criarServico = (requisicao, resposta) => {
+  const { nome, preco } = requisicao.body;
 
-  const novo = {
+  const novoServico = {
     id: servicos.length + 1,
     nome,
-    preco
+    preco,
   };
 
-  servicos.push(novo);
-  res.status(201).json(novo);
+  servicos.push(novoServico);
+  resposta.status(201).json(novoServico);
 };
