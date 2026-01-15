@@ -1,0 +1,62 @@
+{
+  clientes {
+    id
+    nome
+  }
+}
+
+
+{
+  clientes {
+    id
+    nome
+    telefone
+    email
+  }
+}
+
+
+{
+  servicos {
+    id
+    nome
+    preco
+    duracaoMinutos
+  }
+}
+
+{
+  agendamentos {
+    id
+    data
+    observacoes
+    cliente {
+      id
+      nome
+      telefone
+      email
+    }
+    servico {
+      id
+      nome
+      preco
+      duracaoMinutos
+    }
+  }
+}
+
+{
+  agendamentosPorCliente(clienteId: 1) {
+    id
+    data
+    cliente {
+      id
+      nome
+    }
+    servico {
+      id
+      nome
+      preco
+    }
+  }
+}
